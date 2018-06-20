@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block title %}资产管理{% endblock%}
+{% block link %}
+<link href="{{url_for('static',filename='bootstrap-slider/css/bootstrap-slider.min.css')}}" rel="stylesheet" />
+<link href="{{url_for('static',filename='bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+{% endblock %}
+{% block nav_asset %}active{% endblock %}
+{% block main %}
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#add-asset" data-title="添加资产" data-btn-txt="添加" data-url='/asset/create/' >添加资产</button>
+  </br>
+</br>
+ <table class="table table-bordered table-striped table-hover">
+       <thead>
+          <tr>
+              <th>SN</th>
+              <th>IP(主机名)</th>
+              <th>操作系统</th>
+              <th>CPU/内存/硬盘</th>
+              <th>机房</th>
+              <th>使用者(业务)</th>
+              <th>采购时间(保修时长)</th>
+              <th>型号(供应商)</th>
+              <th>操作</th>
+          </tr>
+       </thead>
+       <tbody>
+             {% for asset in assets %}
+             <tr>
+                 <td>{{asset["sn"]}}</td>
+                 <td>{{asset["ip"]}}({{asset["hostname"]}})</td>
+                 <td>{{asset["os"]}}</td>
+                 <td>
+                  <ul>
+                    <li>cpu:{{asset["cpu"]}}核</li>
+                    <li>内存:{{asset["ram"]}}G</li>
+                    <li>硬盘:{{asset["disk"]}}G</li>
+                 </ul>   
+                 </td>
+                 <td>{{asset["idc_id"]}}</td>
+                 <td>{{asset["admin"]}}({{asset["business"]}})</td>
+                 <td>{{asset["purchase_date"]}}({{asset["warranty"]}})</td>
+                 <td>{{asset["model"]}}({{asset["vendor"]}})</td>
+                 <td>
+                    <a class="btn btn-success">修改</a>
+                    <a class="btn btn-danger" onclick="return confirm('确定要删除吗？');">删除</a>
+                 </td>
+             </tr>
+             {% endfor %}
+       </tbody>
+    </table>
+{% endblock %}
+{% block dialog %}
+ <div class="modal fade" id="add-asset" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">添加用户</h4>
+        </div>
+        <div class="modal-body">
+          新建资产
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary btn-form-submit">修改</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+  {% block script %}
+   <script type="text/javascript" src="{{url_for('static',filename='bootstrap-slider/js/bootstrap-slider.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js')}}"></script>
+  {% endblock %}
+  {% block js %}
+  jQuery(document).ready(function() {
+        jQuery('#add-asset').on('show.bs.modal', function (event) {
+              // button触发事件
+              var button = jQuery(event.relatedTarget); 
+              // 取出data属性信息(data-*拼接而成)
+              var title = button.data('title');
+              var btn_txt = button.data('btn-txt');
+              var url = button.data('url'); 
+              //将将取出的值对标签做填充
+              var that = this;
+              jQuery(that).find('.modal-title').text(title);
+              jQuery(that).find('.btn-form-submit').text(btn_txt);
+              jQuery(that).find('.modal-body').load(url);
+              /*jQuery.get('/asset/create/',{},function(data){
+              console.log('that',that)
+              jQuery(that).find('.modal-body').html(data);
+              });*/
+        
+        });
+        jQuery('.btn-form-submit').on('click',function(){
+            var _form = jQuery('#add-asset').find('form');
+            var url = _form.attr('action')
+            var params = _form.serialize()
+            //提交数据form到后台给view里面的函数处理
+            jQuery.post(url,params,function(result){
+             var obj = JSON.parse(result)
+                if(obj._is_ok){
+                  alert("资产创建成功！");
+                  jQuery('#add-asset').modal('hide')
+                  window.location.reload()   //重新刷新页面
+                  // window.location.replace('/logs/') //跳转到什么页面
+                }else{
+                  var errors = [];
+                  for(var key in obj['error']){
+                     errors.push(obj['error'][key])
+                }
+                alert(errors.join('\n'));
+                }
+          });
+      });
+        
+        });
+   {% endblock %}
+
+
+

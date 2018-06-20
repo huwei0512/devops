@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+      <html>
+         <head>
+             <meta charset='utf-8'/>
+             <title>JS学习</title>
+         </head>
+         <body>
+           <input type="input" class="hiddent-btn1" id="num1" />
+           <input type="input" id="num2" value=12 />
+           <input type="input" id="result" />
+           <input type="button" id="btn" onclick="add_click()" value="相加" />      
+           <input type="button" id="btn2" value="相加2" />
+           <input type="button" class="hiddent-btn" value="隐藏" />
+           <input type="button" class="show-btn" value="显示" /> 
+           <div id="content"></div>
+
+           <script type="text/javascript" src="jquery-1.9.1.js"></script>
+           <script type="text/javascript">
+           jQuery(document).ready(function() {
+                 //页面加载完成执行该部分代码
+                 //获取标签元素
+                 /*
+                 tag ==>jQuery('tag')
+                 id ==>jQuery('#id')
+                 class ==>jQuery('.class')
+                 */
+                 // jQuery('#id').val() 获取id的值
+                 // jQuery('#id').val('value') 设置id对应的value值
+                 // jQuery('#id').html() 获取id的值
+                 // jQuery('#id').html('value') 设置id对应html的value值
+
+                 console.log(jQuery('input'));
+                 //设置value值
+                 jQuery('#num1').val(13);  //设置标签id为num1的value值
+                 //获取html标签内的值
+                 console.log(jQuery('#content').html()) //获取标签内容html值
+                 //设置html内容
+                 jQuery('#content').html("结果");  //设置标签内容html的值
+                 console.log(jQuery('#content').html())  //获取标签内容html的值
+                 //绑定事件(点击按钮触发动作)
+                 jQuery('#btn2').bind('click',function(){
+                      var input1 = jQuery('#num1').val();
+                      var input2 = jQuery('#num2').val();
+                      var rt = calc(parseInt(input1),parseInt(input2));
+                      jQuery('#result').val(rt)
+                      jQuery('#content').html(rt)
+                 });
+                 jQuery('.hiddent-btn').bind('click',function(){
+                  jQuery('#content').hide();
+                 });
+                 jQuery('.show-btn').bind('click',function(){
+                  jQuery('#content').show();
+                 });
+           });
+            // document.getElementById('num2').value = 10              
+            function calc(num1,num2) {
+               return num1 + num2
+          }
+            
+            function add_click(){
+              var input1 = document.getElementById('num1').value,
+                  input2 = document.getElementById('num2').value;
+              var rt = calc(parseInt(input1),parseInt(input2));
+              document.getElementById('result').value = rt
+              // console.log(rt)
+              var div = document.getElementById('content');
+              div.innerHTML = rt
+          }
+              
+            // var name = "dick";
+            // var age = 29;
+            // var score_1 = 10,score_2=25;
+            // var sex = true,hobby=["football","game"],score={"math":80,"english":60};
+            // var max_num = null;
+            // console.log(name);
+            // console.log(age);
+            // console.log(sex);
+            // console.log(hobby);
+            // console.log(score);
+            // console.log(max_num);
+            // console.log(score_1+score_2);
+            // var score_total = score_1+score_2;
+            // console.log(score_total);
+            // var score = prompt("请输入你的分数:")
+            // console.log(score)
+            // score = parseInt(score);
+            // console.log(typeof(score));
+
+            // if(score>=80) {
+            //   alert("优秀")}
+            //   else if(score<80 && score>=60){
+            //     alert("良好")
+            //   }else{alert("不及格")}
+            // var i=5
+            // while(i!=0){
+            //   var name=prompt("请输入你的名字:");
+            //   i-=1;
+            // if(name=="huwei"){alert("ok");i=0
+            // }
+            //   else{alert("error!");
+            // }
+            // }
+            // console.log("over");
+          //   var name='';
+          //   while(name!="huwei"){
+          //     var name=prompt("请输入你的名字:");
+          //     if(name=='huwei'){
+          //       alert("成功");}
+          //   else
+          //     {alert("错误，请重新输入");}
+          // }
+          //   console.log("over");
+          // do {
+          //    var name = prompt("请输入你的名字:");
+          //    if(name=='huwei'){
+          //      alert("成功");}
+          //      else{alert("错误，请重新输入");}
+          // } while(name!="huwei");
+          //for x in range(10);
+          // for(初始化执行语句;条件判断;计数器){
+          //     子语句
+          // }
+          // for(var i=0;i<10;i+=1){
+          //   console.log(i)
+          // }
+          // console.log("over");  
+          // function add(num1,num2) {
+          //      return num1 + num2
+          // }
+
+          // function calc(){
+          //   var num1 = prompt("请输入第一个数字：");
+          //   var num2 = prompt("请输入第二个数字：");
+          //   var rt = add(parseInt(num1),parseInt(num2));
+          //   console.log(rt)
+          // }
+          // calc()
+          </script>
+         
+         </body>
+      </html>
