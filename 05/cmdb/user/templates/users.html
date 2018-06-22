@@ -222,7 +222,7 @@
        params['age'] = jQuery('#input-age').val();
        jQuery.post('/user/update-inputuser/',params,function(data){
         var obj = JSON.parse(data)
-        print 'obj:',obj
+        console.log('obj:',obj) 
         if(obj._is_ok){
           alert("添加用户信息成功!");
           jQuery('#add-user').modal('hide')

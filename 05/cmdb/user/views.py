@@ -207,17 +207,28 @@ def assets():
 @app.route('/asset/create/',methods=['POST','GET'])
 @login_required
 def asset_create():
-
     _idcs = [('1','上海'),('2','北京'),('3','香港'),('4','上海-浦东')]
     return render_template('asset_create.html',idcs=_idcs)
 
 @app.route('/asset/add/',methods=['POST','GET'])
 @login_required
 def asset_add():
-    sn = request.form.get('sn','')
-    
+    _sn = request.form.get('sn','')
+    _ip = request.form.get('ip','')
+    _hostname = request.form.get('hostname','')
+    _os = request.form.get('os','')
+    _cpu = request.form.get('cpu','')
+    _ram = request.form.get('ram','')
+    _disk = request.form.get('disk','')
+    _idc_id = request.form.get('idc_id','')
+    _admin = request.form.get('admin','')
+    _business = request.form.get('business','')
+    _purchase_date = request.form.get('purchase_date','')
+    _warranty = request.form.get('warranty','')
+    _vendor = request.form.get('vendor','')
+    _model = request.form.get('model','')
     #检查用户信息
-    _is_ok,_error = asset.validate_create_asset()
+    _is_ok,_error = asset.validate_create_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model)
     if _is_ok:
-        asset.create_asset()
+        asset.create_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model)
     return json.dumps({'_is_ok':_is_ok,'error':_error,'success':'添加资产成功'})
