@@ -203,12 +203,12 @@ def assets():
     #获取所有资产信息
     _assets = asset.get_asset_list()
     return render_template("assets.html",assets=_assets)
-    
+
 @app.route('/asset/create/',methods=['POST','GET'])
 @login_required
 def asset_create():
-    _idcs = [('1','上海'),('2','北京'),('3','香港'),('4','上海-浦东')]
-    return render_template('asset_create.html',idcs=_idcs)
+    
+    return render_template('asset_create.html',idcs=asset.get_idc_list())
 
 @app.route('/asset/add/',methods=['POST','GET'])
 @login_required
@@ -232,3 +232,20 @@ def asset_add():
     if _is_ok:
         asset.create_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model)
     return json.dumps({'_is_ok':_is_ok,'error':_error,'success':'添加资产成功'})
+
+
+@app.route('/asset/modify/',methods=['POST','GET'])
+@login_required
+def asset_modify():
+    
+    return render_template('asset_modify.html',idcs=asset.get_idc_list())
+
+
+
+@app.route('/asset/delete/')        
+@login_required 
+def delete_asset():
+    aid = request.args.get('id','')
+    asset.delete_asset(aid)
+    flash("删除资产信息成功")
+    return redirect('/assets/')

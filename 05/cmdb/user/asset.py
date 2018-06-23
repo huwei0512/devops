@@ -3,6 +3,9 @@
 from dbutils import execute_fetch_sql,execute_commit_sql
 
 
+def get_idc_list():
+    return [('1','上海'),('2','北京'),('3','香港'),('4','上海-浦东')]
+
 '''
 返回所有资产信息
 [{'sn':'','id':'','hostname':'','ip':'',........},
@@ -29,7 +32,14 @@ None/{}
 '''
 
 def get_by_id(aid):
-    return None
+    _columns = ('id','sn','ip','hostname','os','cpu','ram','disk','idc_id','admin','business','purchase_date','warranty','vendor','model','status')
+    _sql = 'select * from assets where id = %s'
+    _count,_rt_tuple = execute_fetch_sql(_sql,(aid,))
+    #返回list
+    _rt_list = []  
+    for _line in _rt_tuple:
+        _rt_list.append(dict(zip(_columns,_line)))
+    return _rt_list[0] if len(_rt_list) > 0 else None
 
 
 def get_by_sn(sn):
@@ -92,22 +102,54 @@ def create_asset(sn,ip,hostname,os,cpu,ram,disk,idc_id,admin,business,purchase_d
 在修改资产时对输入的信息进行检查
 True/False,error_msg{}
 '''
-def validate_update_asset():
-    pass
+def validate_update_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model,_aid):
+    if get_by_id(_aid) is None:
+        print 'get_user:%s',get_by_id(_aid)
+        return False,u'资产信息不存在!'
+    elif _sn.strip() == '':
+        return False,u'sn编号不能为空'
+    #检查sn编码是否重复
+    #get_by_sn()   #通过此函数直接在数据库中检索sn是否存在
+    elif get_by_sn(_sn):
+        return False,u'sn编码已存在,请重新输入！'
+    elif _ip.strip() == '':
+        return False,u'IP地址不能为空'
+    elif _hostname.strip() == '':
+        return False,u'主机名不能为空'
+    elif _os.strip() == '':
+        return False,u'操作系统不能为空'
+    elif _admin.strip() == '':
+        return False,u'使用人不能为空'
+    elif _business.strip() == '':
+        return False,u'业务不能为空'
+    elif _warranty.strip() == '':
+        return False,u'保修日期不能为空'
+    elif int(_warranty) < 1 or int(_warranty) > 5:
+        return False,u'保修日期必须是1到5的数字'
+    elif _vendor.strip() == '':
+        return False,u"供应商不能为空"
+    elif _model.strip() == '':
+        return False,u"型号不能为空"
+        
+    return True,''
 
 '''
 更新资产，操作数据库
 返回True/False
 '''
-def update_asset():
-    pass
+def update_asset(sn,ip,hostname,os,cpu,ram,disk,idc_id,admin,business,purchase_date,warranty,vendor,model,aid):
+    _sql = 'update assets set sn=%s,ip=%s,hostname=%s,os=%s,cpu=%s,ram=%s,disk=%s,idc_id=%s,admin=%s,business=%s,purchase_date=%s,warranty=%s,vendor=%s,model=%s where id=%s'
+    _args = (sn,ip,hostname,os,cpu,ram,disk,idc_id,admin,business,purchase_date,warranty,vendor,model,aid)
+    execute_commit_sql(_sql,_args)
 
 '''
 删除资产，操作数据库
 返回True/False
 '''
-def delete():
-    pass
+def delete_asset(aid):
+    _sql = 'update assets set status=1 where id=%s'
+    _args = (aid,)
+    execute_commit_sql(_sql,_args)
 
 
 if __name__ == '__main__':
