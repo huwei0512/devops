@@ -231,14 +231,39 @@ def asset_add():
     _is_ok,_error = asset.validate_create_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model)
     if _is_ok:
         asset.create_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model)
-    return json.dumps({'_is_ok':_is_ok,'error':_error,'success':'添加资产成功'})
+    return json.dumps({'_is_ok':_is_ok,'error':_error,'success':'资产添加成功'})
 
 
 @app.route('/asset/modify/',methods=['POST','GET'])
 @login_required
 def asset_modify():
-    
-    return render_template('asset_modify.html',idcs=asset.get_idc_list())
+    _id = request.args.get('id', '')
+    _asset = asset.get_by_id(_id)
+    return render_template('asset_modify.html',asset=_asset,idcs=asset.get_idc_list())
+
+@app.route('/asset/update/',methods=['POST','GET'])
+@login_required
+def asset_update():
+    _id = request.form.get('id','')
+    _sn = request.form.get('sn','')
+    _ip = request.form.get('ip','')
+    _hostname = request.form.get('hostname','')
+    _os = request.form.get('os','')
+    _cpu = request.form.get('cpu','')
+    _ram = request.form.get('ram','')
+    _disk = request.form.get('disk','')
+    _idc_id = request.form.get('idc_id','')
+    _admin = request.form.get('admin','')
+    _business = request.form.get('business','')
+    _purchase_date = request.form.get('purchase_date','')
+    _warranty = request.form.get('warranty','')
+    _vendor = request.form.get('vendor','')
+    _model = request.form.get('model','')
+    #检查用户信息
+    _is_ok,_error = asset.validate_update_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model,_id)
+    if _is_ok:
+        asset.update_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_business,_purchase_date,_warranty,_vendor,_model,_id)
+    return json.dumps({'_is_ok':_is_ok,'error':_error,'success':'资产修改成功'})
 
 
 

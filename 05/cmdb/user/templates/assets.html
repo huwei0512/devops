@@ -41,7 +41,7 @@
                  <td>{{asset["purchase_date"]}}({{asset["warranty"]}})</td>
                  <td>{{asset["model"]}}({{asset["vendor"]}})</td>
                  <td>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#dialog" data-title="修改资产" data-btn-txt="修改" data-url='/asset/modify/' data-id="{{asset['id']}}" data-sn="{{asset['sn']}}" data-ip="{{asset['ip']}}" data-hostname="{{asset['hostname']}}" data-os="{{asset['os']}}" data-cpu="{{asset['cpu']}}" data-ram="{{asset['ram']}}" data-disk="{{asset['disk']}}" data-idc_id="{{asset['idc_id']}}" data-admin="{{asset['admin']}}" data-business="{{asset['business']}}" data-purchase_date="{{asset['purchase_date']}}" data-warranty="{{asset['warranty']}}" data-vendor="{{asset['vendor']}}" data-model="{{asset['model']}}" data-status="{{asset['status']}}" >修改</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#dialog" data-title="修改资产" data-btn-txt="修改" data-url="/asset/modify/?id={{asset['id']}}" >修改</button>
                     <a class="btn btn-danger" href="/asset/delete/?id={{asset['id']}}" onclick="return confirm('确定要删除吗？');">删除</a>
                  </td>
              </tr>
@@ -50,7 +50,7 @@
     </table>
 {% endblock %}
 {% block dialog %}
- <!--添加资产-->
+ <!--操作资产-->
  <div class="modal fade" id="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -76,7 +76,7 @@
   {% endblock %}
   {% block js %}
   jQuery(document).ready(function() {
-//添加资产---弹出添加网页
+//操作资产---弹出添加、修改框
         jQuery('#dialog').on('show.bs.modal', function (event) {
               // button触发事件
               var button = jQuery(event.relatedTarget); 
@@ -89,97 +89,26 @@
               jQuery(that).find('.modal-title').text(title);
               jQuery(that).find('.btn-form-submit').text(btn_txt);
               jQuery(that).find('.modal-body').load(url);
+
               /*jQuery.get('/asset/create/',{},function(data){
               console.log('that',that)
               jQuery(that).find('.modal-body').html(data);
               });*/
         
         });
-        //修改资产---弹出修改网页
-        jQuery('#dialog').on('show.bs.modal', function (event) {
-              // button触发事件
-              var button = jQuery(event.relatedTarget); 
-              // 取出data属性信息(data-*拼接而成)
-              var title = button.data('title');
-              var btn_txt = button.data('btn-txt');
-              var url = button.data('url'); 
 
-              var ass_id = button.data('id'); 
-              var ass_sn = button.data('sn'); 
-              var ass_ip = button.data('ip'); 
-              var ass_name = button.data('name'); 
-              var ass_os = button.data('os'); 
-              var ass_cpu = button.data('cpu'); 
-              var ass_ram = button.data('ram'); 
-              var ass_disk = button.data('disk'); 
-              var ass_idcid = button.data('idc_id'); 
-              var ass_admin = button.data('admin'); 
-              var ass_business = button.data('business'); 
-              var ass_date = button.data('purchase_date'); 
-              var ass_warra = button.data('warranty'); 
-              var ass_vend = button.data('vendor'); 
-              var ass_model = button.data('model');
-              var ass_status = button.data('status');
-
-              //将将取出的值对标签做填充
-              var that = this;
-              jQuery(that).find('.modal-title').text(title);
-              jQuery(that).find('.btn-form-submit').text(btn_txt);
-              jQuery(that).find('.modal-body').load(url);
-
-              jQuery(that).find('#asset-id').val(ass_id);
-              jQuery(that).find('#asset-sn').val(ass_sn);
-              jQuery(that).find('#asset-ip').val(ass_ip);
-              jQuery(that).find('#asset-hostname').val(ass_name);
-              jQuery(that).find('#asset-os').val(ass_os);
-              jQuery(that).find('#cpu').val(ass_cpu);
-              jQuery(that).find('#ram').val(ass_ram);
-              jQuery(that).find('#disk').val(ass_disk);
-              jQuery(that).find('#asset-idc').val(ass_idcid);
-              jQuery(that).find('#asset-admin').val(ass_admin);
-              jQuery(that).find('#asset-business').val(ass_business);
-              jQuery(that).find('#purchase_date').val(ass_date);
-              jQuery(that).find('#asset-warr').val(ass_warra);
-              jQuery(that).find('#asset-vendor').val(ass_vend);
-              jQuery(that).find('#asset-model').val(ass_model);
-              jQuery(that).find('#asset-stat').val(ass_status);
-            });
-
-//添加资产--提交表单
+//添加资产,修改资产--提交表单
         jQuery('.btn-form-submit').on('click',function(){
-            var _form = jQuery('#add-asset').find('form');
+            var _form = jQuery('#dialog').find('form');
             var url = _form.attr('action')
             var params = _form.serialize()
             //提交数据form到后台给view里面的函数处理
             jQuery.post(url,params,function(result){
              var obj = JSON.parse(result)
                 if(obj._is_ok){
-                  alert("资产创建成功！");
-                  jQuery('#add-asset').modal('hide')
+                  alert(obj.success);
+                  jQuery('#dialog').modal('hide')
                   window.location.reload()   //重新刷新页面
-                  // window.location.replace('/logs/') //跳转到什么页面
-                }else{
-                  var errors = [];
-                  for(var key in obj['error']){
-                     errors.push(obj['error'][key])
-                }
-                alert(errors.join('\n'));
-                }
-          });
-      });
-//修改资产--提交表单
-        jQuery('.btn-form-submit').on('click',function(){
-            var _form = jQuery('#update-asset').find('form');
-            var url = _form.attr('action')
-            var params = _form.serialize()
-            //提交数据form到后台给view里面的函数处理
-            jQuery.post(url,params,function(result){
-             var obj = JSON.parse(result)
-                if(obj._is_ok){
-                  alert("资产修改成功！");
-                  jQuery('#update-asset').modal('hide')
-                  window.location.reload()   //重新刷新页面
-                  // window.location.replace('/logs/') //跳转到什么页面
                 }else{
                   var errors = [];
                   for(var key in obj['error']){

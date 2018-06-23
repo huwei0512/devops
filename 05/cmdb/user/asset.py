@@ -110,8 +110,6 @@ def validate_update_asset(_sn,_ip,_hostname,_os,_cpu,_ram,_disk,_idc_id,_admin,_
         return False,u'sn编号不能为空'
     #检查sn编码是否重复
     #get_by_sn()   #通过此函数直接在数据库中检索sn是否存在
-    elif get_by_sn(_sn):
-        return False,u'sn编码已存在,请重新输入！'
     elif _ip.strip() == '':
         return False,u'IP地址不能为空'
     elif _hostname.strip() == '':
