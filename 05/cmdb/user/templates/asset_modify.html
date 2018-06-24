@@ -53,9 +53,10 @@
     <select class="form-control" name="idc_id" >
       {% for _id,_value in idcs %}
           <option value="{{_id}}" 
-          {% if _id == asset['idc_id'] %} 
-          selected="selected"
-          {% endif %}> {{_value}}</option>
+          {% if _id == asset["idc_id"]|string %}
+          selected="selected" 
+          {% endif %}
+        >{{_value}}</option>
       {% endfor %}
     </select>
     </div>
