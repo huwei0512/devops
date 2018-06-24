@@ -1,0 +1,115 @@
+<form class="form-horizontal" action="/asset/add/" method='post'>
+  <div class="form-group">
+    <label class="col-md-3 control-label">SN编号：</label>
+    <div class="col-md-5">
+    <input type="text" class="form-control" name="sn" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">IP:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="ip" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">主机名:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="hostname" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">操作系统:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="os" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">CPU(核数):</label>
+    <div class="col-md-5">
+    <input type="text" class="form-control" id="cpu" name="cpu" data-slider-id='ex1Slider' type="text" data-slider-min="2" data-slider-max="64" data-slider-step="2" data-slider-value="2" />
+  </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">内存(G):</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" id="ram" name="ram" data-slider-id='ex1Slider' type="text" data-slider-min="64" data-slider-max="1024" data-slider-step="64" data-slider-value="64" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">硬盘大小(G):</label>
+    <div class="col-md-5">
+       <input type="text" class="form-control" id="disk" name="disk" data-slider-id='ex1Slider' type="text" data-slider-min="512" data-slider-max="10240" data-slider-step="128" data-slider-value="512" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">机房ID:</label>
+    <div class="col-md-5">
+    <select class="form-control" name="idc_id">
+      {% for _id,_value in idcs %}
+          <option value="{{_id}}">{{_value}}</option>
+      {% endfor %}
+    </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">使用人:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="admin" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">业务:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="business" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">采购日期:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" id="purchase_date" name="purchase_date" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">保修时间(年):</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="warranty" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">供应商:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="vendor" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label">型号:</label>
+    <div class="col-md-5">
+      <input type="text" class="form-control" name="model" />
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+        jQuery('#cpu').slider({
+           formatter: function(value) {
+               return 'CPU核数: ' + value;
+            }
+         });
+         jQuery('#ram').slider({
+           formatter: function(value) {
+                return '内存: ' + value + "G";
+            }
+         });
+         jQuery('#disk').slider({
+              formatter: function(value) {
+                   return '硬盘: ' + value + "G";
+            }
+         });
+         jQuery('#purchase_date').datetimepicker({
+             language: 'zh-CN',
+             format: 'yyyy-mm-dd',
+             minView:2
+          });
+  });
+</script>
+
