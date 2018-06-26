@@ -3,6 +3,8 @@
 {% block link %}
 <link href="{{url_for('static',filename='bootstrap-slider/css/bootstrap-slider.min.css')}}" rel="stylesheet" />
 <link href="{{url_for('static',filename='bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+<link href="{{url_for('static',filename='sweetalert-1.1.1/dist/sweetalert.css')}}" rel="stylesheet" />
+<link href="{{url_for('static',filename='DataTables-1.10.12/media/css/jquery.dataTables.min.css')}}" rel="stylesheet" />
 {% endblock %}
 {% block nav_asset %}active{% endblock %}
 {% block main %}
@@ -36,9 +38,7 @@
                     <li>硬盘:{{asset["disk"]}}G</li>
                  </ul>   
                  </td>
-                 <td>{% if asset["idc_id"] in idcs_dict %}{% endif %}
-                      {{idcs_dict.get(asset["idc_id"],'')}}               
-                 </td>
+                 <td>{{idcs_dict.get(asset["idc_id"],'')}}</td>
                  <td>{{asset["admin"]}}({{asset["business"]}})</td>
                  <td>{{asset["purchase_date"]}}({{asset["warranty"]}}年)</td>
                  <td>{{asset["model"]}}({{asset["vendor"]}})</td>
@@ -75,9 +75,39 @@
    <script type="text/javascript" src="{{url_for('static',filename='bootstrap-slider/js/bootstrap-slider.js')}}"></script>
    <script type="text/javascript" src="{{url_for('static',filename='bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js')}}"></script>
    <script type="text/javascript" src="{{url_for('static',filename='bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='sweetalert-1.1.1/dist/sweetalert.min.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='DataTables-1.10.12/media/js/dataTables.bootstrap.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='DataTables-1.10.12/media/js/jquery.dataTables.js')}}"></script>
   {% endblock %}
   {% block js %}
   jQuery(document).ready(function() {
+        jQuery('table').DataTable({
+            language: {
+                "sProcessing": "处理中...",
+                "sLengthMenu": "显示 _MENU_ 项结果",
+                "sZeroRecords": "没有匹配结果",
+                "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "搜索:",
+                "sUrl": "",
+                "sEmptyTable": "表中数据为空",
+                "sLoadingRecords": "载入中...",
+                "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                },
+                "oAria": {
+                    "sSortAscending": ": 以升序排列此列",
+                    "sSortDescending": ": 以降序排列此列"
+            }
+        }
+    });
 //操作资产---弹出添加、修改框
         jQuery('#dialog').on('show.bs.modal', function (event) {
               // button触发事件
@@ -108,18 +138,50 @@
             jQuery.post(url,params,function(result){
              var obj = JSON.parse(result)
                 if(obj._is_ok){
-                  alert(obj.success);
-                  jQuery('#dialog').modal('hide')
-                  window.location.reload()   //重新刷新页面
+                  //alert(obj.success);
+                  //jQuery('#dialog').modal('hide')
+                  swal({
+                    title: obj.success,
+                    text: "",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定",
+                    cancelButtonText: "关闭",
+                    closeOnConfirm: true,
+                    closeOnCancel: false
+                  },
+                  function(isConfirm){
+                   window.location.reload()   //重新刷新页面
+                  });
+                  
                 }else{
                   var errors = [];
                   for(var key in obj['error']){
                      errors.push(obj['error'][key])
                 }
-                alert(errors.join('\n'));
-                }
-          });
-      });
+                //alert(errors.join('\n'));
+                swal({
+                  title: "错误信息",
+                  text: errors.join('\n'),
+                  type: "error",
+                  showCancelButton: false,
+                  confirmButtonColor: "#DD6B55",
+                  confirmButtonText: "确定",
+                  cancelButtonText: "关闭",
+                  closeOnConfirm: true,
+                  closeOnCancel: false
+                },
+                function(isConfirm){
+                  if (isConfirm) {
+                    swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                  } else {
+                      swal("Cancelled", "Your imaginary file is safe :)", "error");
+                  }
+                });
+                                }
+                          });
+                      });
         
         });
    {% endblock %}
