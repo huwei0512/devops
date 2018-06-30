@@ -23,6 +23,7 @@ class MySQLConnection(object):
             self.__conn = MySQLdb.connect(host=self.__host,port=self.__port, \
                                    user=self.__user,passwd=self.__passwd, \
                                    db=self.__db,charset=self.__charset)
+
             print '连接数据库 %s 成功！'%(self.__host)
             self.__cur = self.__conn.cursor()
         except BaseException as e:
@@ -31,11 +32,11 @@ class MySQLConnection(object):
     def fetch(self,sql,args=()):
         _cnt =0
         _rt_tuple = ()
-        _cnt = self.execute(sql,args=())
+        _cnt = self.execute(sql,args)
         if self.__cur:
            _rt_tuple = self.__cur.fetchall()
            self.close()
-           return _cnt,_rt_tuple
+        return _cnt,_rt_tuple
 
 
     def commit(self):
@@ -65,7 +66,7 @@ class MySQLConnection(object):
         _count = 0
         _rt_tuple = ()
 
-        #创建和数据库的连接
+        #类实例化为对象
         _conn = MySQLConnection(host=gconf.MYSQL_HOST,port=gconf.MYSQL_PORT, \
                                user=gconf.MYSQL_USER,passwd=gconf.MYSQL_PASSWD, \
                                db=gconf.MYSQL_DB,charset=gconf.MYSQL_CHARSET)
@@ -73,7 +74,7 @@ class MySQLConnection(object):
         if fetch:
             _count,_rt_tuple = _conn.fetch(sql,args)
         else:
-            _count = _conn.execute(sql,args)                    #commit和autocommit(True)任选其一
+            _count = _conn.execute(sql,args)
         _conn.close()
         return _count,_rt_tuple
 
@@ -85,20 +86,35 @@ def execute_fetch_sql(sql,args=()):
 def execute_commit_sql(sql,args=()):
     return execute_sql(sql,args,False)
 
-# def execute_sql(sql,args=(),fetch=True):
-#     _count =0
-#     _rt_tuple = ()
-#     #创建和数据库的连接
-#     _conn = MySQLdb.connect(host=gconf.MYSQL_HOST,port=gconf.MYSQL_PORT, \
-#                            user=gconf.MYSQL_USER,passwd=gconf.MYSQL_PASSWD, \
-#                            db=gconf.MYSQL_DB,charset=gconf.MYSQL_CHARSET)
+def execute_sql(sql,args=(),fetch=True):
+    _conn = None
+    _cur = None
+    _count =0
+    _rt_tuple = ()
+    try:
+        #创建和数据库的连接
+        _conn = MySQLdb.connect(host=gconf.MYSQL_HOST,port=gconf.MYSQL_PORT, \
+                               user=gconf.MYSQL_USER,passwd=gconf.MYSQL_PASSWD, \
+                               db=gconf.MYSQL_DB,charset=gconf.MYSQL_CHARSET)
+        #_conn.autocommit(True)
+        #创建游标
+        _cur = _conn.cursor()
+        #执行SQL
+        _count = _cur.execute(sql,args)
+        if fetch:
+            _rt_tuple = _cur.fetchall()
+            print "_rt_tuple:%s" %_rt_tuple
+        else:
+            _conn.commit()                    #commit和autocommit(True)任选其一
+    except BaseException as e:
+        print e
+    finally:
+        if _cur:
+           _cur.close()
+        if _conn:
+           _conn.close()
 
-#     if fetch:
-#         _count,_rt_tuple = _conn.fetch(sql,args)
-#     else:
-#         _count = _conn.execute(sql,args)                    #commit和autocommit(True)任选其一
-#     _conn.close()
-#     return _count,_rt_tuple
+    return _count,_rt_tuple
 
 
 def bulker_commit_sql(sql,args_list=[]):
@@ -132,5 +148,6 @@ def bulker_commit_sql(sql,args_list=[]):
 
 if __name__ == "__main__":
     #conn.execute('insert into user_auth(username) values(%s)',('dick123',))
-    print MySQLConnection.execute_sql("select * from user_auth")
+    # print MySQLConnection.execute_sql("select * from user_auth")
+    print MySQLConnection.execute_sql("select * from user_auth where username=%s and password=md5(%s)",("dick","123456"))
     

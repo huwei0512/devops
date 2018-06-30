@@ -17,6 +17,7 @@ import time
 import log2db
 import asset
 from user import app  #  user模块下的app变量(Flask对象)
+from models import User
 
 def login_required(func):
 
@@ -58,8 +59,9 @@ def login():
     password = params.get("password","")
     
     #需要验证用户名密码是否正确
-    if user.validate_login(username,password):
-        session['user'] = {'username':username}
+    _user = User.validate_login(username,password)
+    if _user:
+        session['user'] = _user
         return redirect("/users/")                 #跳转到url /users/
     else:
         #登录失败
@@ -70,11 +72,9 @@ def login():
 @app.route("/users/")                              #将url path=/users/的GET请求交由users函数处理
 def users():
     #获取所有用户信息
-    print session
-    if session.get("user") is None:
-        return redirect('/')
-    _users = user.get_users()
-    return render_template("users.html",user_list=_users,msg=request.args.get('msg',''))  #加载渲染user.html模板
+    _users = User.get_users()
+    print 'view_user:',_users
+    return render_template("users.html",user_list=_users)  #加载渲染user.html模板
 
 '''跳转到新建用户信息输入的页面
 '''
