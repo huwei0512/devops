@@ -141,9 +141,9 @@ def update_user():
     age = request.form.get('age','')
     
     #检查用户信息
-    _is_ok,_error = user.validate_update_user(uid,username,password,age)
+    _is_ok,_error = User.validate_update(uid,username,password,age)
     if _is_ok:
-        user.update_user(uid,username,password,age)
+        User.update(uid,username,password,age)
     return json.dumps({'_is_ok':_is_ok,'error':_error})
 
 

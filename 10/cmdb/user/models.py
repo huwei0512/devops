@@ -36,9 +36,6 @@ class User(object):
         return _rt_list
 
 
-        '''检查新建用户信息
-    返回值：True/False，错误信息
-    '''
     @classmethod
     def validate_add(cls,username,password,age):
         if username.strip() == '':
@@ -58,8 +55,6 @@ class User(object):
 
         return True,''
 
-    '''添加用户信息
-    '''
     @classmethod
     def add(cls,username,password,age):
         _sql = 'insert into user_auth(username,password,age) values(%s,md5(%s),%s)'
@@ -76,6 +71,49 @@ class User(object):
         for _line in _rt_tuple:
             _rt_list.append(dict(zip(_columns,_line)))
         return _rt_list[0] if len(_rt_list) > 0 else None
+
+
+    @classmethod
+    def validate_update(cls,uid,username,password,age):
+        if cls.get_user(uid) is None:
+            print 'get_user:%s',cls.get_user(uid)
+            return False,u'用户信息不存在!'
+
+        if username.strip() == '':
+            return False,u'用户名不能为空'
+         
+        _user = cls.get_user_by_name(username)
+        if _user and _user.get('id') !=int(uid):
+            return False,u'用户名已存在'
+
+        #密码要求长度必须大于等于6
+        if len(password) < 6:
+            return False,u'密码必须大于等于6'
+
+        if not str(age).isdigit() or int(age) <= 0 or int(age) > 100:
+            return False,u'年龄必须是0到100的数字'
+
+        return True,''
+
+
+    @classmethod
+    def update(cls,uid,username,password,age):
+        _sql = 'update user_auth set username=%s,password=md5(%s),age=%s where id=%s'
+        _args = (username,password,age,uid)
+        MySQLConnection.execute_sql(_sql,_args,False)
+
+    @classmethod
+    def get_user(cls,uid):
+        _columns = ('id','username','password','age')
+        _sql = 'select * from user_auth where id = %s'
+        _count,_rt_tuple = MySQLConnection.execute_sql(_sql,(uid,))
+        #返回list
+        _rt_list = []  
+        for _line in _rt_tuple:
+            _rt_list.append(dict(zip(_columns,_line)))
+            print '_rt_list(get_user):%s',_rt_list
+        return _rt_list[0] if len(_rt_list) > 0 else None
+
 
 if __name__ == "__main__":
     print User.validate_login("dick","123456")
