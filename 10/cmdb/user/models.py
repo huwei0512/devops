@@ -95,7 +95,6 @@ class User(object):
 
         return True,''
 
-
     @classmethod
     def update(cls,uid,username,password,age):
         _sql = 'update user_auth set username=%s,password=md5(%s),age=%s where id=%s'

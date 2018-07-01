@@ -44,7 +44,8 @@
                  <td>{{asset["model"]}}({{asset["vendor"]}})</td>
                  <td>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#dialog" data-title="修改资产" data-btn-txt="修改" data-url="/asset/modify/?id={{asset['id']}}" >修改</button>
-                    <a class="btn btn-danger" href="/asset/delete/?id={{asset['id']}}" onclick="return confirm('确定要删除吗？');">删除</a>
+                    <!-- <a class="btn btn-danger" href="/asset/delete/?id={{asset['id']}}" onclick="return confirm('确定要删除吗？');">删除</a> -->
+                    <button type="button" class="btn btn-danger btn-delete" data-text="{{asset['hostname']}}" data-url="/asset/delete/?id={{asset['id']}}" >删除</button>
                  </td>
              </tr>
              {% endfor %}
@@ -174,15 +175,34 @@
                 },
                 function(isConfirm){
                   if (isConfirm) {
-                    swal("Deleted!", "Your imaginary file has been deleted.", "success");
                   } else {
-                      swal("Cancelled", "Your imaginary file is safe :)", "error");
                   }
                 });
                                 }
                           });
                       });
-        
+//删除资产            
+      jQuery('.btn-delete').on('click',function(){
+            var that = this;
+            var text = jQuery(that).data('text');
+            var url = jQuery(that).data('url');
+            swal({
+                  title: "确定删除资产"+ text,
+                  text: '',
+                  type: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#DD6B55",
+                  confirmButtonText: "确定",
+                  cancelButtonText: "关闭",
+                  closeOnConfirm: true,
+                  closeOnCancel: true
+                },
+                function(isConfirm){
+                  if (isConfirm) {
+                      window.location.replace(url);
+                      };
+                   });
+                      });
         });
    {% endblock %}
 
