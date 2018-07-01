@@ -1,4 +1,4 @@
-<form class="form-horizontal" action="/asset/add/" method='post'>
+<form class="form-horizontal" id="create_asset" action="/asset/add/" method='post'>
   <div class="form-group">
     <label class="col-md-3 control-label">SN编号：</label>
     <div class="col-md-5">
@@ -110,6 +110,40 @@
              format: 'yyyy-mm-dd',
              minView:2
           });
+          jQuery('#create_asset').bootstrapValidator({
+            feedbackIcons: 
+            {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                sn: {
+                    validators: {
+                        notEmpty: {
+                            message: 'sn编码不能为空'
+                        },
+                        stringLength: {
+                        min: 10,
+                        max: 30,
+                        message: 'sn编码必须大于10个字符，小于30个字符'
+                    }
+                    }
+                },
+                warranty: {
+                    validators: {
+                        notEmpty: {
+                            message: '保修时间不能为空'
+                        },
+                        between: {
+                        min: 1,
+                        max: 5,
+                        message: '保修时间必须为1到5年'
+                    }
+                }
+              }
+            }
+       });
   });
 </script>
 

@@ -102,9 +102,10 @@ def add_user():
     # print hobby
 
     #检查用户信息
-    _is_ok,_error = User.validate_add(username,password,age)
+    _user = User(id=None,username=username,password=password,age=age)
+    _is_ok,_error = _user.validate_add(username,password,age)
     if _is_ok:
-        User.add(username,password,age)
+        _user.add(username,password,age)
     return json.dumps({'_is_ok':_is_ok,'error':_error})
         # return redirect(url_for('users'))        #跳转到用户列表url_for
     

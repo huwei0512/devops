@@ -5,6 +5,7 @@
 <link href="{{url_for('static',filename='bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
 <link href="{{url_for('static',filename='sweetalert-1.1.1/dist/sweetalert.css')}}" rel="stylesheet" />
 <link href="{{url_for('static',filename='DataTables-1.10.12/media/css/jquery.dataTables.min.css')}}" rel="stylesheet" />
+<link href="{{url_for('static',filename='bootstrapvalidator-0.4.5/dist/css/bootstrapValidator.min.css')}}" rel="stylesheet" />
 {% endblock %}
 {% block nav_asset %}active{% endblock %}
 {% block main %}
@@ -80,6 +81,7 @@
    <script type="text/javascript" src="{{url_for('static',filename='sweetalert-1.1.1/dist/sweetalert.min.js')}}"></script>
    <script type="text/javascript" src="{{url_for('static',filename='DataTables-1.10.12/media/js/dataTables.bootstrap.js')}}"></script>
    <script type="text/javascript" src="{{url_for('static',filename='DataTables-1.10.12/media/js/jquery.dataTables.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static',filename='bootstrapvalidator-0.4.5/dist/js/bootstrapValidator.min.js')}}"></script>
   {% endblock %}
   {% block js %}
   jQuery(document).ready(function() {
@@ -112,6 +114,7 @@
 //操作资产---弹出添加、修改框
         jQuery('#dialog').on('show.bs.modal', function (event) {
               // button触发事件
+              if(!event.relatedTarget){return;}
               var button = jQuery(event.relatedTarget); 
               // 取出data属性信息(data-*拼接而成)
               var title = button.data('title');
@@ -121,23 +124,29 @@
               var that = this;
               jQuery(that).find('.modal-title').text(title);
               jQuery(that).find('.btn-form-submit').text(btn_txt);
-              jQuery(that).find('.modal-body').load(url);
+              //jQuery(that).find('.modal-body').load(url);
 
-              /*jQuery.get('/asset/create/',{},function(data){
+              jQuery.get(url,{},function(data){
               console.log('that',that)
               jQuery(that).find('.modal-body').html(data);
-              });*/
+              });
         
         });
 
 //添加资产,修改资产--提交表单
         jQuery('.btn-form-submit').on('click',function(){
             var _form = jQuery('#dialog').find('form');
-            var url = _form.attr('action')
-            var params = _form.serialize()
+            //获取表单对象
+            var bootstrapValidator = $(_form).data('bootstrapValidator');
+            //手动触发验证
+            bootstrapValidator.validate();
+            //测试打印isValid()返回值
+            if(!bootstrapValidator.isValid()){return;}
+            var url = _form.attr('action');
+            var params = _form.serialize();
             //提交数据form到后台给view里面的函数处理
             jQuery.post(url,params,function(result){
-             var obj = JSON.parse(result)
+             var obj = JSON.parse(result);
                 if(obj._is_ok){
                   //alert(obj.success);
                   //jQuery('#dialog').modal('hide')
