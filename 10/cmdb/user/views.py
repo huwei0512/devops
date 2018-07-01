@@ -72,7 +72,7 @@ def login():
 @app.route("/users/")                              #将url path=/users/的GET请求交由users函数处理
 def users():
     #获取所有用户信息
-    _users = User.get_users()
+    _users = User.get_list()
     print 'view_user:',_users
     return render_template("users.html",user_list=_users)  #加载渲染user.html模板
 
@@ -102,9 +102,9 @@ def add_user():
     # print hobby
 
     #检查用户信息
-    _is_ok,_error = user.validate_add_user(username,password,age)
+    _is_ok,_error = User.validate_add(username,password,age)
     if _is_ok:
-        user.add_user(username,password,age)
+        User.add(username,password,age)
     return json.dumps({'_is_ok':_is_ok,'error':_error})
         # return redirect(url_for('users'))        #跳转到用户列表url_for
     
